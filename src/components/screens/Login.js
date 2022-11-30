@@ -1,18 +1,30 @@
 import React from 'react'
 import PropTypes from "prop-types"
-import { ImageBackground, StyleSheet, View } from 'react-native'
+//Components
+import { Dimensions, Image, ImageBackground, KeyboardAvoidingView, StyleSheet, View } from 'react-native'
 import CrossButton from '../ui/CrossButton/CrossButton'
 import CrossInputBox from '../ui/CrossInputBox/CrossInputBox'
-
+import useResponsive from '../hooks/useResponsive'
+//Styles
 import { commonStyles } from '../styles/commonStyles'
+//Api
+import { signInApi } from '../services/api/authApi'
+//Storage
+import {setInStorage} from '../utils/Storage'
 
 function Login(props) {
-    let user={
-        mail:'',
+    let isDesktop = useResponsive()
+    let user = {
+        email:'',
         psw:''
     }
 
-    function signinButtonPress(){
+    async function signinButtonPress(){
+        let result = await signInApi(user.email,user.psw)
+        console.log(result.data)
+        setInStorage("userID", result?.data?.id)
+        setInStorage("token", result?.data?.token)
+        setInStorage("refreshToken", result?.data?.refreshToken)
         if(!!props.callbackLogin) props.callbackLogin()
     }
 
@@ -23,7 +35,7 @@ function Login(props) {
     function getEmail(e){
         user={
             ...user,
-            mail: e
+            email: e
         }
     }
 
@@ -35,12 +47,19 @@ function Login(props) {
     }
 
     return (
-        <View style={commonStyles.screenContainer} className="bg">
-           <ImageBackground source={require('../assets/images/bg-login.png')} resizeMode='cover' style={[styles.bg]}>
-                <CrossInputBox callbackChange={getEmail} placeholder="Email" />
-                <CrossInputBox callbackChange={getPassword} placeholder="Password" />
-                <CrossButton label='Accedi' callbackPress={signinButtonPress} type="primary"/>
-                <CrossButton label='Registrati' callbackPress={signupButtonPress}/>
+        <View style={commonStyles.screenContainer}>
+           <ImageBackground source={isDesktop? require('../assets/images/bg-login-desktop.jpg') : require('../assets/images/bg-login-mobile.jpg')} resizeMode='cover' style={[styles.bg, isDesktop ? styles.bgDesktop : styles.bgMobile]}>
+                <Image resizeMode='contain' source={require("../assets/images/login.png")} style={[styles.image, isDesktop ? styles.imageDesktop : styles.imageMobile]}/>
+
+                <KeyboardAvoidingView behavior="padding">
+                    <View>
+                        <CrossInputBox callbackChange={getEmail} placeholder="Email" type={"mail"}/>
+                        <CrossInputBox callbackChange={getPassword} placeholder="Password" type={"password"} isPassword={true}/>
+                        <CrossButton label='Accedi' callbackPress={signinButtonPress} type="primary"/>
+                    </View>
+                </KeyboardAvoidingView>
+
+                <CrossButton label='Registrati' callbackPress={signupButtonPress} size="small"/>
             </ImageBackground>
         </View>
     )
@@ -54,8 +73,24 @@ Login.propTypes = {
 const styles = StyleSheet.create({
     bg: {
         flex: 1,
-        justifyContent: "center",
+        width: Dimensions.get("window").width,
+        justifyContent: "space-around",
         alignItems: "center"
+    },
+    bgMobile: {
+        padding: 20
+    },
+    bgDesktop: {
+        padding: 100
+    },
+    image: {
+        width: "100%"
+    },
+    imageMobile: {
+        height: "40%"
+    },
+    imageDesktop:{
+        height:'50%'
     }
 })
 

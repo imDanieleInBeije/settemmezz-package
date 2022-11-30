@@ -15,17 +15,17 @@ function CrossButton(props) {
     if (!!props.callbackPress) props.callbackPress();
   }
   return /*#__PURE__*/_react.default.createElement(_reactNative.Pressable, {
-    style: [styles.button, isDesktop ? styles.buttonDesktop : styles.buttonMobile, props.type === "primary" ? {
+    style: [styles.button, props.size === "small" && styles.buttonSmall, props.type === "primary" ? {
       backgroundColor: "#97080C"
     } : {
       backgroundColor: "#FFF9E9"
     }, props.disabled && {
       opacity: 0.5
-    }],
+    }, props.addStyles],
     disabled: props.disabled,
     onPress: press
   }, /*#__PURE__*/_react.default.createElement(_reactNative.Text, {
-    style: [styles.buttonLabel, isDesktop ? styles.buttonLabelDesktop : styles.buttonLabelMobile, props.type === "primary" ? {
+    style: [styles.buttonLabel, isDesktop ? styles.buttonLabelDesktop : styles.buttonLabelMobile, props.size === "small" && (isDesktop ? styles.buttonSmallLabelDesktop : styles.buttonSmallLabelMobile), props.type === "primary" ? {
       color: "#FFF9E9"
     } : {
       color: "#97080C"
@@ -36,29 +36,44 @@ var styles = _reactNative.StyleSheet.create({
   button: {
     borderRadius: 10,
     paddingVertical: 10,
-    paddingHorizontal: 20
+    paddingHorizontal: 40,
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center"
   },
-  buttonDesktop: {},
-  buttonMobile: {},
-  buttonLabel: {},
+  buttonSmall: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5
+  },
+  buttonLabel: {
+    //Può servire per il font
+  },
   buttonLabelMobile: {
     fontSize: 18
   },
   buttonLabelDesktop: {
-    fontSize: 22
+    fontSize: 24
+  },
+  buttonSmallLabelMobile: {
+    fontSize: 12
+  },
+  buttonSmallLabelDesktop: {
+    fontSize: 16
   }
 });
 CrossButton.propTypes = {
   label: _propTypes.default.string.isRequired,
   type: _propTypes.default.string,
   callbackPress: _propTypes.default.func,
-  disabled: _propTypes.default.bool
+  disabled: _propTypes.default.bool,
+  size: _propTypes.default.string
 };
 CrossButton.defaultProps = {
   label: "",
   type: "secondary",
   callbackPress: undefined,
-  disabled: false
+  size: "default"
 };
 var _default = CrossButton;
 exports.default = _default;

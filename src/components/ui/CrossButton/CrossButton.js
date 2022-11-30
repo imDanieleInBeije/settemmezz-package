@@ -13,16 +13,20 @@ function CrossButton(props) {
   return (
     <Pressable
       style={[
-        styles.button, isDesktop ? styles.buttonDesktop : styles.buttonMobile,
+        styles.button,
+        props.size === "small" && styles.buttonSmall,
         props.type === "primary" ? {backgroundColor: "#97080C"} : {backgroundColor: "#FFF9E9"},
-        props.disabled && {opacity: 0.5}
+        props.disabled && {opacity: 0.5},
+        props.addStyles
       ]}
       disabled={props.disabled}
       onPress={press}
     >
       <Text
         style={[
-          styles.buttonLabel, isDesktop ? styles.buttonLabelDesktop : styles.buttonLabelMobile,
+          styles.buttonLabel,
+          isDesktop ? styles.buttonLabelDesktop : styles.buttonLabelMobile,
+          props.size === "small" && (isDesktop ? styles.buttonSmallLabelDesktop : styles.buttonSmallLabelMobile), 
           props.type === "primary" ? {color: "#FFF9E9"} : {color: "#97080C"}
         ]}
       >{props.label}</Text>
@@ -34,21 +38,30 @@ const styles = StyleSheet.create({
     button:{
       borderRadius: 10,
       paddingVertical: 10,
-      paddingHorizontal: 20
+      paddingHorizontal: 40,
+      margin: 5,
+      alignItems: "center",
+      justifyContent: "center"
     },
-    buttonDesktop: {
-      
-    },
-    buttonMobile: {
-      
+    buttonSmall: {
+      paddingVertical: 5,
+      paddingHorizontal: 15,
+      borderRadius: 5
     },
     buttonLabel: {
+      //Può servire per il font
     },
     buttonLabelMobile: {
       fontSize: 18
     },
     buttonLabelDesktop: {
-      fontSize: 22
+      fontSize: 24
+    },
+    buttonSmallLabelMobile: {
+      fontSize: 12
+    },
+    buttonSmallLabelDesktop: {
+      fontSize: 16
     }
 
 })
@@ -57,14 +70,15 @@ CrossButton.propTypes = {
   label: PropTypes.string.isRequired,
   type: PropTypes.string,
   callbackPress: PropTypes.func,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  size: PropTypes.string
 }
 
 CrossButton.defaultProps = {
   label: "",
   type: "secondary",
   callbackPress: undefined,
-  disabled: false
+  size: "default"
 }
 
 export default CrossButton
